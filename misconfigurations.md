@@ -9,6 +9,8 @@
 - [Misconfigurations in Container Images](#misconfigurations-in-container-images)
 - [Misconfigurations in Kubernetes](#misconfigurations-in-kubernetes)
 - [Misconfigurations in Infra as Code](#misconfigurations-in-infra-as-code)
+  - [Terraform](#terraform)
+  - [CloudFormation](#cloudformation)
 - [CI Integration](#ci-integration)
 
 ## Prerequisites
@@ -42,6 +44,8 @@ Sample repository used [here](https://github.com/krol3/infra-code-tf).
 </details></br>
 
 ## Misconfigurations in Infra as Code
+
+### Terraform
 
 **Using tfsec in Terraform manifests**
 
@@ -151,6 +155,57 @@ Failures: 0 (UNKNOWN: 0, LOW: 0, MEDIUM: 0, HIGH: 0, CRITICAL: 0)
 ```
 </details></br>
 <br>
+
+### CloudFormation
+
+```
+trivy conf .
+```
+
+<details>
+<summary>Show results</summary>
+
+```
+trivy conf .
+WARNING: Failed to load module: missing module with source 'terraform-aws-modules/s3-bucket/aws' -  try to 'terraform init' first
+2021-11-25T13:49:04.581-0300	INFO	Detected config files: 4
+
+cf-sample.yaml (cloudformation)
+===============================
+Tests: 11 (SUCCESSES: 4, FAILURES: 7, EXCEPTIONS: 0)
+Failures: 7 (UNKNOWN: 0, LOW: 3, MEDIUM: 0, HIGH: 4, CRITICAL: 0)
+
++------------------------------------------+--------------+------------------------------------------+----------+------------------------------------------+
+|                   TYPE                   |  MISCONF ID  |                  CHECK                   | SEVERITY |                 MESSAGE                  |
++------------------------------------------+--------------+------------------------------------------+----------+------------------------------------------+
+| Cloudformation Security Check powered by | AVD-AWS-0009 | Launch configuration should not have a   |   HIGH   | Launch configuration associates public   |
+|                  cfsec                   |              | public IP address.                       |          | IP address.                              |
++                                          +--------------+------------------------------------------+----------+------------------------------------------+
+|                                          | AVD-AWS-0017 | CloudWatch log groups should be          |   LOW    | Log group is not encrypted.              |
+|                                          |              | encrypted using CMK                      |          |                                          |
++                                          +--------------+------------------------------------------+----------+------------------------------------------+
+|                                          | AVD-AWS-0057 | IAM policy should avoid use of wildcards |   HIGH   | IAM policy document uses wildcarded      |
+|                                          |              | and instead apply the principle of least |          | resource for sensitive action(s).        |
+|                                          |              | privilege                                |          |                                          |
++                                          +              +                                          +          +                                          +
+|                                          |              |                                          |          |                                          |
+|                                          |              |                                          |          |                                          |
+|                                          |              |                                          |          |                                          |
++                                          +              +                                          +          +                                          +
+|                                          |              |                                          |          |                                          |
+|                                          |              |                                          |          |                                          |
+|                                          |              |                                          |          |                                          |
++                                          +--------------+------------------------------------------+----------+------------------------------------------+
+|                                          | AVD-AWS-0099 | Missing description for security group   |   LOW    | Security group rule does not have a      |
+|                                          |              | rule.                                    |          | description.                             |
++                                          +              +                                          +          +                                          +
+|                                          |              |                                          |          |                                          |
+|                                          |              |                                          |          |                                          |
++------------------------------------------+--------------+------------------------------------------+----------+------------------------------------------+
+```
+</details></br>
+<br>
+
 
 ## CI Integration
 

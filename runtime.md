@@ -605,4 +605,23 @@ TIME             UID    COMM             PID     TID     RET              EVENT 
 
 Installing tracee e Postee (notification events)
 
+```
+kubectl create -f \
+https://raw.githubusercontent.com/aquasecurity/postee/main/deploy/kubernetes/postee.yaml -f \
+https://raw.githubusercontent.com/aquasecurity/tracee/main/deploy/kubernetes/tracee-postee/tracee.yaml
+```
+
+>> [Documentation - Deploy Tracee on Kubernetes](https://aquasecurity.github.io/tracee/dev/install/kubernetes)
+
 ![tracee-k8s](./images/tracee-k8s-postee.gif)
+
+### Settings the webhook: slack
+
+### Update the route to catch the message
+
+Routes: https://github.com/aquasecurity/postee/blob/main/docs/routes.md
+
+### Update the render message : Template
+
+tracee-slack
+https://github.com/aquasecurity/postee/blob/main/rego-templates/tracee-slack.rego

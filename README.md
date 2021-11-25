@@ -29,7 +29,7 @@ How could you embed security across all stages of Software Development Life Cycl
 - [Detecting Misconfigurations](misconfigurations.md)
     - Container Images
     - Kubernetes
-    - Infra as a Code: Terraform
+    - Infra as a Code: Terraform, CloudFormation
     - CI Integration: Github Action
 - [Security Audit in Kubernetes](audit-k8s.md)
     - Workloads Scanning
