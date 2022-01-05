@@ -4,17 +4,20 @@
 - [Prerequisites](#prerequisites)
 - [Tracee](#tracee)
   - [Tracee Signatures](#tracee-signatures)
+    - [Fileless Malware sample](#fileless-malware-sample)
   - [Trace](#trace)
-  - [Trace Containers](#trace-containers)
-  - [Trace Events](#misconfigurations-in-kubernetes)
-- Tracee in Kubernetes
+    - [Trace Containers](#trace-containers)
+    - [Trace Events](#trace-events)
+- [Tracee in Kubernetes](#tracee-in-kubernetes)
 
 ## Prerequisites
 
 Before you begin, you need the following software:
 
-- A Linux, stand-alone virtual machine (VM)
+- A Linux, stand-alone virtual machine (VM): Ubuntu 20+
 - Docker container runtime
+
+> Check current status on eBPF and [BTF supportability over their kernel versions](https://github.com/aquasecurity/btfhub/blob/main/docs/supported-distros.md)
 
 ## Tracee
 
@@ -22,13 +25,13 @@ Tracee is a Runtime Security and forensics tool for Linux using eBPF.
 
 It is using Linux eBPF technology to trace your system and applications at runtime, and analyze collected events to detect suspicious behavioral patterns.
 
-Explore tracee using `docker run aquasec/tracee:latest -h`
+Explore tracee using `docker run --privileged aquasec/tracee:latest -h`
 
 <details>
 <summary>Show results</summary>
 
 ```
-docker run aquasec/tracee:latest -h
+docker run --privileged aquasec/tracee:latest -h
 NAME:
    tracee-rules - A rule engine for Runtime Security
 
@@ -68,21 +71,24 @@ Check the **Rules** in Tracee "the signatures"
 > Check the [Tracee-rules documentation](https://github.com/aquasecurity/tracee/tree/main/tracee-ebpf) and the [signatures available](https://aquasecurity.github.io/tracee/dev/rules-index/)
 
 ```
-docker run --privileged aquasec/tracee:latest --list
+docker run --privileged -v /tmp/tracee:/tmp/tracee aquasec/tracee:latest --list
 ```
 
 <details>
 <summary>Show results</summary>
 
 ```
-docker run --privileged aquasec/tracee:latest --list
+docker run --privileged -v /tmp/tracee:/tmp/tracee aquasec/tracee:latest --list
 
-Loaded 14 signature(s): [TRC-1 TRC-13  TRC-2 TRC-3 TRC-11 TRC-9 TRC-4 TRC-5 TRC-12 TRC-8 TRC-6 TRC-10 TRC-7]
+starting tracee-ebpf...
+starting tracee-rules...
+Loaded 15 signature(s): [TRC-1 TRC-13  TRC-2 TRC-14 TRC-3 TRC-11 TRC-9 TRC-4 TRC-5 TRC-12 TRC-8 TRC-6 TRC-10 TRC-7]
 ID         NAME                                VERSION DESCRIPTION
 TRC-1      Standard Input/Output Over Socket   0.1.0   Redirection of process's standard input/output to socket
 TRC-13     Kubernetes API server connection detected 0.1.0   A connection to the kubernetes API server was detected. The K8S API server is the brain of your K8S cluster, adversaries may try and communicate with the K8S API server to gather information/credentials, or even run more containers and laterally expand their grip on your systems.
 
 TRC-2      Anti-Debugging                      0.1.0   Process uses anti-debugging technique to block debugger
+TRC-14     CGroups Release Agent File Modification 0.1.0   An Attempt to modify CGroups release agent file was detected. CGroups are a Linux kernel feature which allows process's resources limitations. Adversaries may use this feature for container escaping.
 TRC-3      Code injection                      0.1.0   Possible code injection into another process
 TRC-11     Container Host Mount Detected       0.1.0   Container root host filesystem mount detected. A mount to the host filesystem can be exploited by adversaries to perform container escape.
 TRC-9      New Executable Was Dropped During Runtime 0.1.0   An Executable file was dropped in your system during runtime. Usually container images are built with all binaries needed inside, a dropped binary may indicate an adversary infiltrated into your container.
@@ -93,11 +99,10 @@ TRC-8      K8S Service Account Token Use Detected 0.1.0   The Kubernetes service
 TRC-6      kernel module loading               0.1.0   Attempt to load a kernel module detection
 TRC-10     K8S TLS Certificate Theft Detected  0.1.0   Kubernetes TLS certificate theft was detected. TLS certificates are used to establish trust between systems, the kubernetes certificate is used to to enable secured communication between kubernetes components, like the kubelet, scheduler, controller and API server. An adversary may steal a kubernetes certificate on a compromised system to impersonate kuberentes components within the cluster.
 TRC-7      LD_PRELOAD                          0.1.0   Usage of LD_PRELOAD to allow hooks on process
-2021/11/02 14:34:23 kernel headers could not be found, they are required for bpf compilation if CORE is not enabled. Set KERN_HEADERS to their path.
 ```
 </details></br>
 
-By default Tracee will be loaded **ALL** the signatures (TRC).
+By **default** Tracee will be loaded **ALL** the signatures (TRC).
 
 ```
 docker run --rm --pid=host --privileged -v /tmp/tracee:/tmp/tracee -it aquasec/tracee:latest
@@ -112,6 +117,8 @@ Loaded 14 signature(s): [TRC-1 TRC-13  TRC-2 TRC-3 TRC-11 TRC-9 TRC-4 TRC-5 TRC-
 ```
 </details></br>
 
+### Fileless Malware sample
+
 Using this sample image with **fileless runtime malware**, we will see the signatures Tracee catching the event.
 
 > More about fileless malware in Containers [here](https://blog.aquasec.com/fileless-malware-container-security)
@@ -119,12 +126,13 @@ Using this sample image with **fileless runtime malware**, we will see the signa
 ```
 docker run teamnautilus/fileless_test
 ```
+![fileless-detection-sample](./images/fileless-detection-sample.png)
 
 ![tracee-detect-fileless](./images/tracee-detect-fileless.gif)
 
 ### Trace
 
-Check the options of Trace output: `docker run aquasec/tracee:latest trace --help`
+Check the options of Trace command: `docker run aquasec/tracee:latest trace --help`
 
 <details>
 <summary>Show results</summary>
@@ -159,6 +167,45 @@ GLOBAL OPTIONS:
 ```
 </details></br>
 
+Check the options of Trace --trace option: `docker run --rm --pid=host --privileged -v /tmp/tracee:/tmp/tracee -it aquasec/tracee:latest trace --trace help`
+
+<details>
+<summary>Show results</summary>
+
+```
+...
+
+Examples:
+  --trace pid=new                                              | only trace events from new processes
+  --trace pid=510,1709                                         | only trace events from pid 510 or pid 1709
+  --trace p=510 --trace p=1709                                 | only trace events from pid 510 or pid 1709 (same as above)
+  --trace container=new                                        | only trace events from newly created containers
+  --trace container                                            | only trace events from containers
+  --trace c                                                    | only trace events from containers (same as above)
+  --trace '!container'                                         | only trace events from the host
+  --trace uid=0                                                | only trace events from uid 0
+  --trace mntns=4026531840                                     | only trace events from mntns id 4026531840
+  --trace pidns!=4026531836                                    | only trace events from pidns id not equal to 4026531840
+  --trace tree=476165                                          | only trace events that descend from the process with pid 476165
+  --trace tree!=5023                                           | only trace events if they do not descend from the process with pid 5023
+  --trace tree=3213,5200 --trace tree!=3215                    | only trace events if they descend from 3213 or 5200, but not 3215
+  --trace 'uid>0'                                              | only trace events from uids greater than 0
+  --trace 'pid>0' --trace 'pid<1000'                           | only trace events from pids between 0 and 1000
+  --trace 'u>0' --trace u!=1000                                | only trace events from uids greater than 0 but not 1000
+  --trace event=execve,open                                    | only trace execve and open events
+  --trace event=open*                                          | only trace events prefixed by "open"
+  --trace event!=open*,dup*                                    | don't trace events prefixed by "open" or "dup"
+  --trace set=fs                                               | trace all file-system related events
+  --trace s=fs --trace e!=open,openat                          | trace all file-system related events, but not open(at)
+  --trace uts!=ab356bc4dd554                                   | don't trace events from uts name ab356bc4dd554
+  --trace comm=ls                                              | only trace events from ls command
+  --trace close.fd=5                                           | only trace 'close' events that have 'fd' equals 5
+  --trace openat.pathname=/tmp*                                | only trace 'openat' events that have 'pathname' prefixed by "/tmp"
+  --trace openat.pathname!=/tmp/1,/bin/ls                      | don't trace 'openat' events that have 'pathname' equals /tmp/1 or /bin/ls
+  --trace comm=bash --trace follow                             | trace all events that originated from bash or from one of the processes spawned by bash
+```
+</details></br>
+
 ### Trace Containers
 
 ```
@@ -170,7 +217,7 @@ docker run --rm --pid=host --privileged -v /tmp/tracee:/tmp/tracee -it aquasec/t
 
 ### Trace Events
 
-Check all the OS events and syscalls using eBPF that Tracee support.
+Check all the OS events and syscalls that Tracee support.
 
 ```
  docker run aquasec/tracee:latest trace --list
