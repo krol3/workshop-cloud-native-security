@@ -13,7 +13,7 @@ In this quick start hands-on workshop, you will explore the build, infrastructur
 
 [![secure-container](https://www.redhat.com/outfit/3c814deb579d4de95d1eb7207aa9f2e4/cl-cloud-native-container-design-whitepaper_Image6_v2.png)](https://www.redhat.com/en/resources/cloud-native-container-design-whitepaper)
 
-How could you embed security across all stages of Software Development Life Cycle?. Build, infra, and runtime will be the key points of this workshop. We will explore good practices to embed security along the container images, Kubernetes, infrastructure as a code, and workloads and how to DevOps practices will help its adoption together with tools to implement security, compliance, and forensic.
+How could you embed security across all stages of Software Development Life Cycle?. Build, infra, and runtime will be the key points of this workshop. We will explore good practices to embed security along the container images, Kubernetes, infrastructure as a code, and workloads and how to DevOps practices will help its adoption together with tools to implement security, compliance and forensic.
 
 
 ## Table of Contents
