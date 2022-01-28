@@ -21,11 +21,12 @@ How could you embed security across all stages of Software Development Life Cycl
 - [Container Threads](https://github.com/krol3/container-security-checklist#container-threat-model)
 - [Container Security Best Practices](https://github.com/krol3/container-security-checklist#container-security-checklist)
 - [Detecting Vulnerabilities](vulnerabilities.md)
-    - Container images
-    - Filesystems
-    - Git repositories
-    - Application dependencies by Language
-    - CI Integration: Github Action
+    - [Scanning Container images](./vulnerabilities.md#container-images)
+    - [Filter Log4j-CVE using OPA](./vulnerabilities.md#filter-log4j-cve-using-opa)
+    - [Scanning Filesystems](./vulnerabilities.md#scanning-filesystems)
+    - [Scanning Git Repositories](./vulnerabilities.md#scanning-git-repositories)
+    - [Binaries created by Golang](./vulnerabilities.md#binaries-created-by-golang)
+    - [CI Integration: Github Action](./vulnerabilities.md#ci-integration)
 - [Detecting Misconfigurations](misconfigurations.md)
     - Container Images
     - Kubernetes

@@ -6,6 +6,7 @@
 - [Scanning Container Images](#container-images)
   - Tar images
   - Ignore unfixed vulnerabilities
+- [Filter Log4j-CVE using OPA](#filter-log4j-cve-using-opa)
 - [Scanning Filesystems](#scanning-filesystems)
   - Rootfs
 - [Scanning Git Repositories](#scanning-git-repositories)
@@ -249,6 +250,152 @@ Total: 0 (UNKNOWN: 0, LOW: 0, MEDIUM: 0, HIGH: 0, CRITICAL: 0)
 > Some Linux distributions (e.g. Debian or Ubuntu) will release information about CVEs for which there is no released patched package, and so you get the question of “should a vulnerability scanner report those?”.
 >  [Unfixed vulnerabilities in traditional scanners](https://raesene.github.io/blog/2020/11/22/When_Is_A_Vulnerability_Not_A_Vulnerability/)
 
+
+## Filter Log4j-CVE using OPA
+
+We wil filter the results that only contains the log4j CVE: CVE-2021-44228, CVE-2021-44832, CVE-2021-45046.
+
+Here the normal results using Trivy
+
+```
+trivy image jerbi/log4j
+```
+<details>
+<summary>Show results</summary>
+
+```
+trivy image jerbi/log4j
+2022-01-27T23:17:57.322-0300	INFO	Need to update DB
+2022-01-27T23:17:57.322-0300	INFO	Downloading DB...
+25.78 MiB / 25.78 MiB [---------------------------------------------------------------------------------------------------------------------------------] 100.00% 14.15 MiB p/s 2s
+2022-01-27T23:18:01.576-0300	INFO	Detected OS: alpine
+2022-01-27T23:18:01.576-0300	INFO	Detecting Alpine vulnerabilities...
+2022-01-27T23:18:01.582-0300	INFO	Number of language-specific files: 1
+2022-01-27T23:18:01.582-0300	INFO	Detecting jar vulnerabilities...
+2022-01-27T23:18:01.586-0300	WARN	This OS version is no longer supported by the distribution: alpine 3.8.2
+2022-01-27T23:18:01.586-0300	WARN	The vulnerability detection may be insufficient because security updates are not provided
+
+jerbi/log4j (alpine 3.8.2)
+==========================
+Total: 310 (UNKNOWN: 0, LOW: 152, MEDIUM: 109, HIGH: 41, CRITICAL: 8)
+
++-------------------+------------------+----------+-------------------+---------------+------------------------------------------+
+|      LIBRARY      | VULNERABILITY ID | SEVERITY | INSTALLED VERSION | FIXED VERSION |                  TITLE                   |
++-------------------+------------------+----------+-------------------+---------------+------------------------------------------+
+| krb5-libs         | CVE-2018-20217   | MEDIUM   | 1.15.3-r0         | 1.15.4-r0     | krb5: Reachable assertion in             |
+|                   |                  |          |                   |               | the KDC using S4U2Self requests          |
+|                   |                  |          |                   |               | -->avd.aquasec.com/nvd/cve-2018-20217    |
++-------------------+------------------+----------+-------------------+---------------+------------------------------------------+
+| libbz2            | CVE-2019-12900   | CRITICAL | 1.0.6-r6          | 1.0.6-r7      | bzip2: out-of-bounds write               |
+|                   |                  |          |                   |               | in function BZ2_decompress               |
+|                   |                  |          |                   |               | -->avd.aquasec.com/nvd/cve-2019-12900    |
++-------------------+------------------+----------+-------------------+---------------+------------------------------------------+
+| libcom_err        | CVE-2019-5094    | MEDIUM   | 1.44.2-r0         | 1.44.2-r1     | e2fsprogs: Crafted ext4 partition        |
+|                   |                  |          |                   |               | leads to out-of-bounds write             |
+|                   |                  |          |                   |               | -->avd.aquasec.com/nvd/cve-2019-5094     |
++                   +------------------+          +                   +---------------+------------------------------------------+
+|                   | CVE-2019-5188    |          |                   | 1.44.2-r2     | e2fsprogs: Out-of-bounds                 |
+|                   |                  |          |                   |               | write in e2fsck/rehash.c                 |
+|                   |                  |          |                   |               | -->avd.aquasec.com/nvd/cve-2019-5188     |
++-------------------+------------------+----------+-------------------+---------------+------------------------------------------+
+| libjpeg-turbo     | CVE-2019-2201    | HIGH     | 1.5.3-r3          | 1.5.3-r6      | libjpeg-turbo: several integer           |
+|                   |                  |          |                   |               | overflows and subsequent                 |
+|                   |                  |          |                   |               | segfaults when attempting to             |
+|                   |                  |          |                   |               | compress/decompress gigapixel...         |
+|                   |                  |          |                   |               | -->avd.aquasec.com/nvd/cve-2019-2201     |
++                   +------------------+----------+                   +---------------+------------------------------------------+
+|                   | CVE-2018-14498   | MEDIUM   |                   | 1.5.3-r5      | libjpeg-turbo: heap-based buffer         |
+|                   |                  |          |                   |               | over-read via crafted 8-bit BMP          |
+|                   |                  |          |                   |               | in get_8bit_row in rdbmp.c...            |
+|                   |                  |          |                   |               | -->avd.aquasec.com/nvd/cve-2018-14498    |
++-------------------+------------------+----------+-------------------+---------------+------------------------------------------+
+| libpng            | CVE-2018-14550   | HIGH     | 1.6.34-r1         | 1.6.37-r0     | libpng: Stack-based buffer overflow in   |
+|                   |                  |          |                   |               | contrib/pngminus/pnm2png.c:get_token()   |
+|                   |                  |          |                   |               | potentially leading to                   |
+|                   |                  |          |                   |               | arbitrary code execution...              |
+|                   |                  |          |                   |               | -->avd.aquasec.com/nvd/cve-2018-14550    |
++                   +------------------+----------+                   +               +------------------------------------------+
+|                   | CVE-2018-14048   | MEDIUM   |                   |               | libpng: Segmentation fault in            |
+|                   |                  |          |                   |               | png.c:png_free_data function             |
+|                   |                  |          |                   |               | causing denial of service                |
+|                   |                  |          |                   |               | -->avd.aquasec.com/nvd/cve-2018-14048    |
++                   +------------------+          +                   +               +------------------------------------------+
+|                   | CVE-2019-7317    |          |                   |               | libpng: use-after-free in                |
+|                   |                  |          |                   |               | png_image_free in png.c                  |
+|                   |                  |          |                   |               | -->avd.aquasec.com/nvd/cve-2019-7317     |
++-------------------+------------------+          +-------------------+---------------+------------------------------------------+
+| libtasn1          | CVE-2018-1000654 |          | 4.13-r0           | 4.14-r0       | libtasn1: Infinite loop in               |
+|                   |                  |          |                   |               | _asn1_expand_object_id(ptree)            |
+|                   |                  |          |                   |               | leads to memory exhaustion               |
+|                   |                  |          |                   |               | -->avd.aquasec.com/nvd/cve-2018-1000654  |
+
+....
+```
+</details></br>
+
+We will define a rule using Rego, to show only the events that containts the log4j CVEs.
+
+```
+trivy image --ignore-policy log4j-cve.rego jerbi/log4j
+```
+
+Here the content of [log4j-cve.rego](./log4j-cve.rego) file.
+
+<details>
+<summary>Show results</summary>
+
+```
+trivy image --ignore-policy log4j-cve.rego jerbi/log4j
+
+2022-01-27T23:45:52.880-0300	INFO	Detected OS: alpine
+2022-01-27T23:45:52.880-0300	INFO	Detecting Alpine vulnerabilities...
+2022-01-27T23:45:52.886-0300	INFO	Number of language-specific files: 1
+2022-01-27T23:45:52.887-0300	INFO	Detecting jar vulnerabilities...
+2022-01-27T23:45:52.894-0300	WARN	This OS version is no longer supported by the distribution: alpine 3.8.2
+2022-01-27T23:45:52.894-0300	WARN	The vulnerability detection may be insufficient because security updates are not provided
+
+jerbi/log4j (alpine 3.8.2)
+==========================
+Total: 0 (UNKNOWN: 0, LOW: 0, MEDIUM: 0, HIGH: 0, CRITICAL: 0)
+
+
+Java (jar)
+==========
+Total: 6 (UNKNOWN: 0, LOW: 0, MEDIUM: 2, HIGH: 0, CRITICAL: 4)
+
++-------------------------------------+------------------+----------+-------------------+-----------------------+---------------------------------------+
+|               LIBRARY               | VULNERABILITY ID | SEVERITY | INSTALLED VERSION |     FIXED VERSION     |                 TITLE                 |
++-------------------------------------+------------------+----------+-------------------+-----------------------+---------------------------------------+
+| org.apache.logging.log4j:log4j-api  | CVE-2021-44228   | CRITICAL | 2.14.1            | 2.15.0                | log4j-core: Remote code execution     |
+|                                     |                  |          |                   |                       | in Log4j 2.x when logs contain        |
+|                                     |                  |          |                   |                       | an attacker-controlled...             |
+|                                     |                  |          |                   |                       | -->avd.aquasec.com/nvd/cve-2021-44228 |
++                                     +------------------+          +                   +-----------------------+---------------------------------------+
+|                                     | CVE-2021-45046   |          |                   | 2.16.0                | log4j-core: DoS in log4j 2.x          |
+|                                     |                  |          |                   |                       | with thread context message           |
+|                                     |                  |          |                   |                       | pattern and context...                |
+|                                     |                  |          |                   |                       | -->avd.aquasec.com/nvd/cve-2021-45046 |
++                                     +------------------+----------+                   +-----------------------+---------------------------------------+
+|                                     | CVE-2021-44832   | MEDIUM   |                   | 2.17.1, 2.12.4, 2.3.2 | log4j-core: remote code               |
+|                                     |                  |          |                   |                       | execution via JDBC Appender           |
+|                                     |                  |          |                   |                       | -->avd.aquasec.com/nvd/cve-2021-44832 |
++-------------------------------------+------------------+----------+                   +-----------------------+---------------------------------------+
+| org.apache.logging.log4j:log4j-core | CVE-2021-44228   | CRITICAL |                   | 2.15.0                | log4j-core: Remote code execution     |
+|                                     |                  |          |                   |                       | in Log4j 2.x when logs contain        |
+|                                     |                  |          |                   |                       | an attacker-controlled...             |
+|                                     |                  |          |                   |                       | -->avd.aquasec.com/nvd/cve-2021-44228 |
++                                     +------------------+          +                   +-----------------------+---------------------------------------+
+|                                     | CVE-2021-45046   |          |                   | 2.16.0                | log4j-core: DoS in log4j 2.x          |
+|                                     |                  |          |                   |                       | with thread context message           |
+|                                     |                  |          |                   |                       | pattern and context...                |
+|                                     |                  |          |                   |                       | -->avd.aquasec.com/nvd/cve-2021-45046 |
++                                     +------------------+----------+                   +-----------------------+---------------------------------------+
+|                                     | CVE-2021-44832   | MEDIUM   |                   | 2.17.1, 2.12.4, 2.3.2 | log4j-core: remote code               |
+|                                     |                  |          |                   |                       | execution via JDBC Appender           |
+|                                     |                  |          |                   |                       | -->avd.aquasec.com/nvd/cve-2021-44832 |
++-------------------------------------+------------------+----------+-------------------+-----------------------+---------------------------------------+
+```
+</details></br>
 
 ## Scanning Filesystems
 
