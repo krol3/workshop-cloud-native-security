@@ -397,6 +397,69 @@ Total: 6 (UNKNOWN: 0, LOW: 0, MEDIUM: 2, HIGH: 0, CRITICAL: 4)
 ```
 </details></br>
 
+> More details about Filtering vulnerabilities [here](https://aquasecurity.github.io/trivy/dev/vulnerability/examples/filter/) and [samples using OPA with Trivy vulnerability results](https://github.com/aquasecurity/trivy/tree/main/contrib/example_policy).
+
+Find the package path of these CVE:
+
+```
+trivy image -f json jerbi/log4j | grep "\"VulnerabilityID\": \"CVE-2021-44228\"" -A2
+```
+
+<details>
+<summary>Show results</summary>
+
+```
+trivy image -f json jerbi/log4j | grep "\"VulnerabilityID\": \"CVE-2021-44228\"" -A2
+
+          "VulnerabilityID": "CVE-2021-44228",
+          "PkgName": "org.apache.logging.log4j:log4j-api",
+          "PkgPath": "app/spring-boot-application.jar",
+--
+          "VulnerabilityID": "CVE-2021-44228",
+          "PkgName": "org.apache.logging.log4j:log4j-core",
+          "PkgPath": "app/spring-boot-application.jar",
+```
+</details></br>
+
+Download the content of the image in the filesystem:
+
+```
+docker export $(docker create jerbi/log4j) | tar -C /tmp/my-rootfs -xvf -
+cd /tmp/my-rootfs
+```
+
+Explore the files of the app "spring-boot-application.jar"
+`unzip ./app/spring-boot-application.jar`
+
+Find the libraries with the name log4j.
+
+<details>
+<summary>Show results</summary>
+
+```
+find . -name "log*"
+
+./usr/bin/logger
+./usr/lib/jvm/java-1.8-openjdk/jre/lib/logging.properties
+./app/BOOT-INF/classes/fr/christophetd/log4shell
+./app/BOOT-INF/lib/log4j-core-2.14.1.jar
+./app/BOOT-INF/lib/log4j-slf4j-impl-2.14.1.jar
+./app/BOOT-INF/lib/log4j-jul-2.14.1.jar
+./app/BOOT-INF/lib/log4j-api-2.14.1.jar
+./bin/login
+./log4j.yaml
+./sbin/logread
+./etc/logrotate.d
+./var/log
+./BOOT-INF/classes/fr/christophetd/log4shell
+./BOOT-INF/lib/log4j-core-2.14.1.jar
+./BOOT-INF/lib/log4j-slf4j-impl-2.14.1.jar
+./BOOT-INF/lib/log4j-jul-2.14.1.jar
+./BOOT-INF/lib/log4j-api-2.14.1.jar
+./log4j.rego
+```
+</details></br>
+
 ## Scanning Filesystems
 
 ```
