@@ -11,7 +11,7 @@
 - [Misconfigurations in Infra as Code](#misconfigurations-in-infra-as-code)
   - [Terraform](#terraform)
   - [CloudFormation](#cloudformation)
-- [CI Integration](#ci-integration)
+- [CI Integration with Github Action](#ci-integration)
 
 ## Prerequisites
 
@@ -23,15 +23,13 @@ Before you begin, you need the following software:
 
 ## Misconfigurations in Container Images
 
-`trivy config  .`
+To find missconfiguration in the dockerfiles, use `trivy config  .`
 
-<details>
-<summary>Show results</summary>
+A sample with a dockerfile with missconfiguration, and after fixed it.
 
-![](https://i.imgur.com/2SYJEQe.png)
-</details></br>
+![missconfig-container](./images/trivy-missconf-container.gif)
 
-Sample repository used [here](https://github.com/krol3/infra-code-tf).
+Sample repository used [here](https://github.com/krol3/demo-trivy/)
 ## Misconfigurations in Kubernetes
 
 `trivy config  .`

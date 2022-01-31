@@ -28,10 +28,12 @@ How could you embed security across all stages of Software Development Life Cycl
     - [Binaries created by Golang](./vulnerabilities.md#binaries-created-by-golang)
     - [CI Integration: Github Action](./vulnerabilities.md#ci-integration)
 - [Detecting Misconfigurations](misconfigurations.md)
-    - Container Images
-    - Kubernetes
-    - Infra as a Code: Terraform, CloudFormation
-    - CI Integration: Github Action
+    - [Misconfigurations in Container Images](./misconfigurations.md#misconfigurations-in-container-images)
+    - [Misconfigurations in Kubernetes](./misconfigurations.md#misconfigurations-in-kubernetes)
+    - Misconfigurations in Infra as Code
+      - [Terraform](./misconfigurations.md#terraform)
+      - [CloudFormation](./misconfigurations.md#cloudformation)
+    - [CI Integration with Github Action](./misconfigurations.md#ci-integration)
 - [Security Audit in Kubernetes](audit-k8s.md)
     - Workloads Scanning
     - Kubernetes CIS Benchmark
