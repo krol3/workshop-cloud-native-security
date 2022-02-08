@@ -4,11 +4,12 @@
 - [Prerequisites](#prerequisites)
 - [Vulnerability Database](#vulnerability-database)
 - [Scanning Container Images](#container-images)
-  - Tar images
-  - Ignore unfixed vulnerabilities
+  - [**Risk knowledge**](#risk-knowledge)
+  - [Tar Images](#tar-images)
+  - [**Unfixed vulnerabilities**](#unfixed-vulnerabilities)
 - [Filter Log4j-CVE using OPA](#filter-log4j-cve-using-opa)
 - [Scanning Filesystems](#scanning-filesystems)
-  - Rootfs
+  - [Rootfs](#rootfs)
 - [Scanning Git Repositories](#scanning-git-repositories)
 - [Binaries created by Golang](#binaries-created-by-golang)
 - [CI Integration](#ci-integration)
@@ -611,13 +612,27 @@ Total: 1 (UNKNOWN: 0, LOW: 0, MEDIUM: 0, HIGH: 1, CRITICAL: 0)
 
 ## CI Integration
 
-Using [trivy-action](https://github.com/aquasecurity/trivy-action) you can implement the scanning with the github action for Trivy.
+Using [trivy-action](https://github.com/aquasecurity/trivy-action) you can run Trivy in your Workflow.
 
-Sample github workflow used [here](https://github.com/krol3/demo-trivy/blob/main/.github/workflows/scan-image.yaml)
+```
+  - name: Trivy - vulnerability Scanner
+    uses: aquasecurity/trivy-action@master
+    with:
+      image-ref: 'docker.io/${{ env.ORG }}/${{ env.IMAGE_NAME }}:${{ github.sha }}'
+      format: 'table'
+      exit-code: '0'
+      ignore-unfixed: true
+      vuln-type: 'os,library'
+      severity: 'HIGH,CRITICAL'
+```
 
 ![Trivy image scanning](./images/gh-action-trivy-image.png)
+> Sample github workflow [here](https://github.com/krol3/demo-trivy/blob/main/.github/workflows/scan-image.yaml)
 
+Trivy can generate a SARIF (Static Analysis Results Interchange Format) file.
 
-Using Sarif.tpl report with Github
+`trivy image --format sarif --output demo-image.sarif alpine:latest`
 
-![Trivy image scanning sarif](./images/gh-action-trivy-sarif.png)
+For example you can upload the Trivy result using the SARIF file to [Github Code Scanning](https://docs.github.com/en/code-security/code-scanning/integrating-with-code-scanning/sarif-support-for-code-scanning).
+
+![Trivy image scanning sarif](./images/gh-action-trivy-demo.png)

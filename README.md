@@ -26,7 +26,7 @@ How could you embed security across all stages of Software Development Life Cycl
     - [Scanning Filesystems](./vulnerabilities.md#scanning-filesystems)
     - [Scanning Git Repositories](./vulnerabilities.md#scanning-git-repositories)
     - [Binaries created by Golang](./vulnerabilities.md#binaries-created-by-golang)
-    - [CI Integration: Github Action](./vulnerabilities.md#ci-integration)
+    - [CI Integration with Github Action](./vulnerabilities.md#ci-integration)
 - [Detecting Misconfigurations](misconfigurations.md)
     - [Misconfigurations in Container Images](./misconfigurations.md#misconfigurations-in-container-images)
     - [Misconfigurations in Kubernetes](./misconfigurations.md#misconfigurations-in-kubernetes)
