@@ -9,6 +9,7 @@
   - [**Unfixed vulnerabilities**](#unfixed-vulnerabilities)
 - [Filter Log4j-CVE using OPA](#filter-log4j-cve-using-opa)
 - [Scanning Filesystems](#scanning-filesystems)
+  - [Fs with missconfiguration](#scanning-filesystems-missconfiguration)
   - [Rootfs](#rootfs)
 - [Scanning Git Repositories](#scanning-git-repositories)
 - [Binaries created by Golang](#binaries-created-by-golang)
@@ -501,13 +502,66 @@ Total: 3 (UNKNOWN: 0, LOW: 0, MEDIUM: 1, HIGH: 2, CRITICAL: 0)
 ```
 </details></br>
 
+### Scanning filesystems missconfiguration
+
+```
+trivy fs --security-checks=vuln,config .
+```
+
+<details>
+<summary>Show results</summary>
+
+```
+trivy fs --security-checks=vuln,config .
+2022-04-14T08:20:26.132-0500	INFO	Number of language-specific files: 1
+2022-04-14T08:20:26.132-0500	INFO	Detecting gomod vulnerabilities...
+2022-04-14T08:20:26.141-0500	INFO	Detected config files: 9
+
+go.sum (gomod)
+==============
+Total: 2 (UNKNOWN: 0, LOW: 0, MEDIUM: 1, HIGH: 1, CRITICAL: 0)
+
++-----------------------------+------------------+----------+--------------------+--------------------------------------+---------------------------------------+
+|           LIBRARY           | VULNERABILITY ID | SEVERITY | INSTALLED VERSION  |            FIXED VERSION             |                 TITLE                 |
++-----------------------------+------------------+----------+--------------------+--------------------------------------+---------------------------------------+
+| github.com/dgrijalva/jwt-go | CVE-2020-26160   | HIGH     | 3.2.0+incompatible |                                      | jwt-go: access restriction            |
+|                             |                  |          |                    |                                      | bypass vulnerability                  |
+|                             |                  |          |                    |                                      | -->avd.aquasec.com/nvd/cve-2020-26160 |
++-----------------------------+------------------+----------+--------------------+--------------------------------------+---------------------------------------+
+| github.com/miekg/dns        | CVE-2019-19794   | MEDIUM   | 1.0.14             | 1.1.25-0.20191211073109-8ebf2e419df7 | golang-github-miekg-dns: predictable  |
+|                             |                  |          |                    |                                      | TXID can lead to response forgeries   |
+|                             |                  |          |                    |                                      | -->avd.aquasec.com/nvd/cve-2019-19794 |
++-----------------------------+------------------+----------+--------------------+--------------------------------------+---------------------------------------+
+
+Dockerfile (dockerfile)
+=======================
+Tests: 23 (SUCCESSES: 22, FAILURES: 1, EXCEPTIONS: 0)
+Failures: 1 (UNKNOWN: 0, LOW: 0, MEDIUM: 0, HIGH: 1, CRITICAL: 0)
+
++---------------------------+------------+-----------+----------+------------------------------------------+
+|           TYPE            | MISCONF ID |   CHECK   | SEVERITY |                 MESSAGE                  |
++---------------------------+------------+-----------+----------+------------------------------------------+
+| Dockerfile Security Check |   DS002    | root user |   HIGH   | Specify at least 1 USER                  |
+|                           |            |           |          | command in Dockerfile with               |
+|                           |            |           |          | non-root user as argument                |
+|                           |            |           |          | -->avd.aquasec.com/appshield/ds002       |
++---------------------------+------------+-----------+----------+------------------------------------------+
+
+internal/pipe/docker/testdata/Dockerfile (dockerfile)
+=====================================================
+Tests: 23 (SUCCESSES: 20, FAILURES: 3, EXCEPTIONS: 0)
+Failures: 3 (UNKNOWN: 0, LOW: 1, MEDIUM: 1, HIGH: 1, CRITICAL: 0)
+
+...
+```
+</details></br>
+
 ### Rootfs
 
 Scan a root filesystem (such as a host machine, a virtual machine image, or an unpacked container image filesystem).
 
 Scanning a sample Ubuntu VM rootfs:
 `sudo trivy rootfs --severity HIGH,CRITICAL --ignore-unfixed  /`
-
 
 <details>
 <summary>Show results</summary>
@@ -528,6 +582,7 @@ trivy rootfs /tmp/my-rootfs
 ![](https://i.imgur.com/ope1cQr.png)
 </details></br>
 
+> [fs vs rootfs](https://github.com/aquasecurity/trivy/discussions/1279)
 ## Scanning Git repositories
 
 `trivy repo https://github.com/goreleaser/goreleaser.git`
