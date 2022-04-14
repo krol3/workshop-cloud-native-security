@@ -7,6 +7,7 @@
   - [**Risk knowledge**](#risk-knowledge)
   - [Tar Images](#tar-images)
   - [**Unfixed vulnerabilities**](#unfixed-vulnerabilities)
+- [Generate SBOM artifact](#sbom-artifact)
 - [Filter Log4j-CVE using OPA](#filter-log4j-cve-using-opa)
 - [Scanning Filesystems](#scanning-filesystems)
   - [Fs with missconfiguration](#scanning-filesystems-missconfiguration)
@@ -252,7 +253,13 @@ Total: 0 (UNKNOWN: 0, LOW: 0, MEDIUM: 0, HIGH: 0, CRITICAL: 0)
 > Some Linux distributions (e.g. Debian or Ubuntu) will release information about CVEs for which there is no released patched package, and so you get the question of “should a vulnerability scanner report those?”.
 >  [Unfixed vulnerabilities in traditional scanners](https://raesene.github.io/blog/2020/11/22/When_Is_A_Vulnerability_Not_A_Vulnerability/)
 
+## SBOM Artifact
 
+```
+trivy sbom  --output alpine.sbom alpine:3.15
+```
+
+[See the file](./images/alpine.sbom)
 ## Filter Log4j-CVE using OPA
 
 We wil filter the results that only contains the log4j CVE: CVE-2021-44228, CVE-2021-44832, CVE-2021-45046.

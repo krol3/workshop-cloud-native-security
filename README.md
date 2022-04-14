@@ -24,6 +24,7 @@ How could you embed security across all stages of Software Development Life Cycl
     - [Scanning Container images](./vulnerabilities.md#container-images)
     - [Filter Log4j-CVE using OPA](./vulnerabilities.md#filter-log4j-cve-using-opa)
     - [Scanning Filesystems](./vulnerabilities.md#scanning-filesystems)
+    - [SBOM artifact](./vulnerabilities.md#sbom-artifact)
     - [Scanning Git Repositories](./vulnerabilities.md#scanning-git-repositories)
     - [Binaries created by Golang](./vulnerabilities.md#binaries-created-by-golang)
     - [CI Integration with Github Action](./vulnerabilities.md#ci-integration)
